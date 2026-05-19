@@ -5,7 +5,8 @@ Documento técnico para integradores. Describe el endpoint que permite crear y e
 > **Audiencia:** desarrollador backend que va a consumir el servicio desde su aplicación.
 >
 > **Versión del documento:** 1.0 — 2026-05-12
-> **Owner:** equipo Firmoyo (backend)
+>
+>  **Owner:** equipo Firmoyo (backend)
 
 ---
 
@@ -67,7 +68,6 @@ El endpoint soporta idempotencia mediante el header `Idempotency-Key`.
 - Generar la key como `UUID v4` por cada request lógico (no por cada reintento HTTP).
 - Persistir la key junto a la operación de negocio (ej.: en una tabla `outbox`) para poder reintentar de forma segura ante fallos de red, timeouts o 5xx.
 - Conservar la misma key durante toda la cadena de reintentos del mismo request lógico.
-- TTL de la key del lado del servidor: **TODO: confirmar (típicamente 24h–7 días).**
 
 Ejemplo:
 
@@ -129,7 +129,7 @@ El body acepta un objeto con un `templateCode` y una lista `entries`. Cada entra
 | Campo | Tipo | Obligatorio | Descripción |
 |---|---|---|---|
 | `templateCode` | `string` (UUID) | Sí | Identificador del template previamente cargado en Firmoyo. Define la plantilla del documento, sus campos y la posición de las firmas. **TODO: documentar cómo obtener el `templateCode` (panel admin / endpoint de listado).** |
-| `entries` | `array<Entry>` | Sí | Lista de envelopes a generar. Mínimo 1. **TODO: confirmar máximo permitido por request (sugerido ≤ 100).** |
+| `entries` | `array<Entry>` | Sí | Lista de envelopes a generar. Mínimo <= 100. 
 
 ### 5.3 Objeto `Entry`
 
@@ -151,10 +151,10 @@ El body acepta un objeto con un `templateCode` y una lista `entries`. Cada entra
 | `userType` | `enum` | Sí | Tipo de identificación del firmante. Ejemplo visto: `CI-PY` (Cédula de Identidad Paraguay). **TODO: documentar todos los valores soportados.** |
 | `fullName` | `string` | Sí | Nombre y apellido completos del firmante. |
 | `userValue` | `string` | Sí | Valor del documento de identificación, según `userType`. Para `CI-PY` corresponde al número de cédula. |
-| `deliveryType` | `enum` | Sí | Canal de envío. Ejemplo visto: `EMAIL`. **TODO: documentar otros canales (`SMS`, `WHATSAPP`, etc.).** |
+| `deliveryType` | `enum` | Sí | Canal de envío. Ejemplo visto: `EMAIL`.  |
 | `mail` | `string` (email) | Condicional | Obligatorio si `deliveryType=EMAIL`. |
-| `signType` | `enum` | Sí | Tipo de firma a aplicar. Ejemplo visto: `SIMPLE_SIGN`. **TODO: documentar otros tipos (`ADVANCED_SIGN`, `QUALIFIED_SIGN`, etc.).** |
-| `verificationType` | `enum` | Sí | Mecanismo de verificación previo a la firma. Ejemplo visto: `LINK_ONLY` (basta con abrir el link). **TODO: documentar otros (`OTP_SMS`, `OTP_EMAIL`, `BIOMETRIC`, etc.).** |
+| `signType` | `enum` | Sí | Tipo de firma a aplicar. Ejemplo visto: `SIMPLE_SIGN`.  |
+| `verificationType` | `enum` | Sí | Mecanismo de verificación previo a la firma. Ejemplo visto: `LINK_ONLY` (basta con abrir el link). |
 
 > **Nota:** los valores de los enums listados arriba son los observados en el ejemplo de referencia. **Coordinar con el equipo Firmoyo el catálogo completo** antes de habilitar nuevos flujos.
 
@@ -447,29 +447,10 @@ try (Response response = client.newCall(request).execute()) {
 | **Idempotency-Key** | Identificador único de un request lógico, que permite reintentar de forma segura. |
 | **Recipient** | Destinatario que debe firmar el envelope. |
 
----
-
-## 14. Puntos pendientes (TODO)
-
-Esta versión deja confirmados los puntos sobre `externalId`, firma en paralelo y disponibilidad de sandbox. Quedan abiertos los siguientes ítems, necesarios antes de pasar a producción:
-
-1. URL del ambiente de **producción** (y staging si existe).
-2. Catálogo completo de enums: `userType`, `deliveryType`, `signType`, `verificationType`.
-3. Catálogo de `errorCode` (machine-readable) y `errorMessage`.
-4. (Falta)Cantidad máxima de `entries` por request.
-5. (Falta)Rate limits oficiales (req/seg, req/min, burst).
-6. TTL de `Idempotency-Key` del lado del servidor.
-7. Cómo se obtiene/lista el `templateCode`.
-8. Variables esperadas por cada template (claves válidas para `data`).
-9. Endpoint(s) de consulta de estado del envelope y estados posibles.
-10. Cómo descargar el documento firmado una vez completado.
-11. Política de expiración de envelopes (TTL del link de firma).
-12. Soporte de reenvío / cancelación / reasignación de envelopes.
-13. ¿Existe firma secuencial con orden definido o se confirma que solo hay paralela?
-14. SLA del servicio y contacto de soporte/escalamiento.
 
 ---
 
-## 15. Contacto
+## 14. Contacto
 
-> **TODO:** completar con email/canal de soporte del equipo Firmoyo, owner técnico y horarios de atención.
+> Alan Barrientos alan.barrientos@witec.id
+> Leslie Acosta leslie.acosta@witec.id
