@@ -3,6 +3,7 @@
 Documento técnico para integradores. Describe el endpoint que permite crear y enviar uno o varios *envelopes* (sobres de firma) a partir de un *template* preexistente en Firmoyo.
 
 > **Audiencia:** desarrollador backend que va a consumir el servicio desde su aplicación.
+>
 > **Versión del documento:** 1.0 — 2026-05-12
 > **Owner:** equipo Firmoyo (backend)
 
