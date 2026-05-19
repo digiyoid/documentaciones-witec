@@ -1,2 +1,2 @@
-# documentaciones-witec
-Documentaciones tecnicas witec
+# Documentaciones-witec
+Documentaciones técnicas witec
